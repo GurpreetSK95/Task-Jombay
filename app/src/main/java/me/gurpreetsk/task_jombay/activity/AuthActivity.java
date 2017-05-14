@@ -118,7 +118,12 @@ public class AuthActivity extends AppCompatActivity {
                         realm.executeTransaction(new Realm.Transaction() {
                             @Override
                             public void execute(Realm realm) {
-                                realm.copyToRealm(details);
+                                try {
+                                    realm.copyToRealm(details);
+                                } catch (Exception e) {
+                                    // entry already exists
+                                    e.printStackTrace();
+                                }
                             }
                         });
                     } finally {
