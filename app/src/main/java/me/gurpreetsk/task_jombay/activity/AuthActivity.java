@@ -11,26 +11,19 @@ import android.util.Patterns;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
-import io.realm.RealmList;
 import me.gurpreetsk.task_jombay.R;
-import me.gurpreetsk.task_jombay.model.Token;
+import me.gurpreetsk.task_jombay.model.Auth;
 import me.gurpreetsk.task_jombay.model.user.User;
 import me.gurpreetsk.task_jombay.model.user.UserDetails;
 import me.gurpreetsk.task_jombay.rest.ApiClient;
 import me.gurpreetsk.task_jombay.rest.ApiInterface;
 import me.gurpreetsk.task_jombay.utils.Constants;
-import me.gurpreetsk.task_jombay.utils.CustomTypeAdapter;
-import me.gurpreetsk.task_jombay.utils.RealmListConverter;
-import me.gurpreetsk.task_jombay.utils.RealmString;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -64,13 +57,13 @@ public class AuthActivity extends AppCompatActivity {
                 && Patterns.EMAIL_ADDRESS.matcher(edittextUserEmail.getText().toString()).matches()
                 && !TextUtils.isEmpty(edittextUserPassword.getText().toString())) {
             ApiInterface apiService = ApiClient.getInstance().create(ApiInterface.class);
-            Call<Token> call = apiService.authenticateUser(edittextUserEmail.getText().toString(),
+            Call<Auth> call = apiService.authenticateUser(edittextUserEmail.getText().toString(),
                     edittextUserPassword.getText().toString(),
                     "password",
                     "user");
-            call.enqueue(new Callback<Token>() {
+            call.enqueue(new Callback<Auth>() {
                 @Override
-                public void onResponse(Call<Token> call, Response<Token> response) {
+                public void onResponse(Call<Auth> call, Response<Auth> response) {
                     try {
                         Log.i(TAG, "onResponse: " + response.body().getAccessToken());
                         SharedPreferences.Editor editor = preferences.edit();
@@ -90,7 +83,7 @@ public class AuthActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(Call<Token> call, Throwable t) {
+                public void onFailure(Call<Auth> call, Throwable t) {
                     Log.e(TAG, "onFailure: " + t.toString());
                     Toast.makeText(AuthActivity.this, "Failed to login", Toast.LENGTH_SHORT).show();
                 }

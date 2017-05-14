@@ -45,7 +45,8 @@ dependencies {
     //stetho
     compile "com.facebook.stetho:stetho:$stethoVer"
     compile "com.uphyca:stetho_realm:$uphycaStethoVer"
-    //misc-UI
+    //misc
+    compile "com.firebase:firebase-jobdispatcher:$jobSchedulerVer"
     compile "com.rengwuxian.materialedittext:library:$materialEditTextVer"
 
 }

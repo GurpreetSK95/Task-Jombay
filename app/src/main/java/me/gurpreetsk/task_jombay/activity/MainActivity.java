@@ -14,6 +14,13 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.RetryStrategy;
+import com.firebase.jobdispatcher.Trigger;
+
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import me.gurpreetsk.task_jombay.R;
@@ -22,6 +29,7 @@ import me.gurpreetsk.task_jombay.model.user.UserDetails;
 import me.gurpreetsk.task_jombay.model.userProfile.UserProfile;
 import me.gurpreetsk.task_jombay.rest.ApiClient;
 import me.gurpreetsk.task_jombay.rest.ApiInterface;
+import me.gurpreetsk.task_jombay.service.TokenService;
 import me.gurpreetsk.task_jombay.utils.Constants;
 import me.gurpreetsk.task_jombay.utils.RealmString;
 import retrofit2.Call;
@@ -42,6 +50,19 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        FirebaseJobDispatcher dispatcher =
+                new FirebaseJobDispatcher(new GooglePlayDriver(MainActivity.this));
+        Job myJob = dispatcher.newJobBuilder()
+                .setService(TokenService.class) // the JobService that will be called
+                .setTag("token-tag")        // uniquely identifies the job
+                .setRecurring(true)
+                .setTrigger(Trigger.executionWindow(0, 6))//todo set
+                .setLifetime(Lifetime.FOREVER)
+                .setReplaceCurrent(false)
+                .setRetryStrategy(RetryStrategy.DEFAULT_LINEAR)
+                .build();
+        dispatcher.mustSchedule(myJob);
+
 
         Realm realm = null;
         try {
