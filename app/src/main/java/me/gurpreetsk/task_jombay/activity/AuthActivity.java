@@ -111,7 +111,7 @@ public class AuthActivity extends AppCompatActivity {
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.code() == 200) {
                     final UserDetails details = response.body().getUserDetails();
-                    Log.i(TAG, "onResponse: " + details.getEmail());
+                    Log.i(TAG, "onResponse: " + details.getId());
                     Realm realm = null;
                     try {
                         realm = Realm.getDefaultInstance();

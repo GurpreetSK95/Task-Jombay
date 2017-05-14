@@ -35,9 +35,9 @@ public interface ApiInterface {
             "include[user_lessons][only][]=status" +
             "&include[user_lessons][include][lesson][only]=title" +
             "&include[user_lessons][only][]=lesson_id&select=_id")
-    Call<UserProfile> getUserProfile(@Path("company_id") String companyId,
+    Call<UserProfile> getUserProfile(@Header("Authorization") String authorization,
+                                     @Path("company_id") String companyId,
                                      @Path("user_id") String userId);
-
 
 
 }
