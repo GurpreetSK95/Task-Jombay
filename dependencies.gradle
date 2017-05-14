@@ -11,6 +11,10 @@ ext {
     retrofitVer = "2.0.2"
     gsonVer = "2.6.2"
     butterknifeVer = "8.5.1"
+    realmVer = "3.1.4"
+    uphycaStethoVer = "2.0.0"
+    materialEditTextVer = "2.1.4"
+    stethoVer = "1.4.2"
 
     //testing libraries
     espressoVer = "2.2.2"

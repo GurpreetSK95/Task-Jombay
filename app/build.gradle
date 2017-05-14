@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion compileSdkVer
@@ -18,7 +19,6 @@ android {
         }
     }
     buildTypes.each {
-        it.buildConfigField 'String', 'MOVIEDB_API_KEY', "123"
     }
 }
 
@@ -31,14 +31,21 @@ dependencies {
 
     compile "com.android.support:appcompat-v7:$supportLibVer"
     compile "com.android.support.constraint:constraint-layout:$coordinatorLayoutVer"
+    compile "com.android.support:recyclerview-v7:$supportLibVer"
     compile "com.android.support:design:$supportLibVer"
 
     //external dependencies
+    //retrofit
     compile "com.google.code.gson:gson:$gsonVer"
     compile "com.squareup.retrofit2:retrofit:$retrofitVer"
     compile "com.squareup.retrofit2:converter-gson:$retrofitVer"
-    compile "com.android.support:recyclerview-v7:$supportLibVer"
+    //butterknife
     compile "com.jakewharton:butterknife:$butterknifeVer"
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVer"
+    //stetho
+    compile "com.facebook.stetho:stetho:$stethoVer"
+    compile "com.uphyca:stetho_realm:$uphycaStethoVer"
+    //misc-UI
+    compile "com.rengwuxian.materialedittext:library:$materialEditTextVer"
 
 }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/default_screen_margin"
+    android:orientation="vertical"
+    tools:context="me.gurpreetsk.task_jombay.activity.AuthActivity">
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/edittext_user_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/user_email"
+        android:inputType="textEmailAddress"
+        app:met_floatingLabel="highlight"/>
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/edittext_user_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/user_password"
+        app:met_floatingLabel="highlight"/>
+
+    <Button
+        style="?buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@+id/button_login"
+        android:layout_margin="@dimen/default_screen_margin"
+        android:padding="@dimen/default_screen_margin"
+        android:text="@string/sign_in"/>
+
+</LinearLayout>
