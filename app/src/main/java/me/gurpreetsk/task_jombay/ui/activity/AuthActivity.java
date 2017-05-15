@@ -1,7 +1,9 @@
 package me.gurpreetsk.task_jombay.ui.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,6 +35,7 @@ import me.gurpreetsk.task_jombay.rest.ApiClient;
 import me.gurpreetsk.task_jombay.rest.ApiInterface;
 import me.gurpreetsk.task_jombay.service.TokenService;
 import me.gurpreetsk.task_jombay.utils.Constants;
+import me.gurpreetsk.task_jombay.utils.NetworkConnnection;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,6 +50,7 @@ public class AuthActivity extends AppCompatActivity {
     Button buttonLogin;
 
     SharedPreferences preferences;
+    ProgressDialog progressDialog = null;
 
     private static final String TAG = AuthActivity.class.getSimpleName();
 
@@ -54,52 +58,73 @@ public class AuthActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_auth);
-        ButterKnife.bind(this);
         preferences = PreferenceManager.getDefaultSharedPreferences(AuthActivity.this);
+        if (!preferences.getBoolean(Constants.IS_LOGGED_IN, false)) {
+            setContentView(R.layout.activity_auth);
+            ButterKnife.bind(this);
+        } else
+            startActivity(new Intent(AuthActivity.this, MainActivity.class));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (progressDialog != null)
+            progressDialog.dismiss();
+        finish();
     }
 
     @OnClick(R.id.button_login)
     public void loginUser() {
-        //TODO: check internet connectivity
-        if (!TextUtils.isEmpty(edittextUserEmail.getText().toString())
-                && Patterns.EMAIL_ADDRESS.matcher(edittextUserEmail.getText().toString()).matches()
-                && !TextUtils.isEmpty(edittextUserPassword.getText().toString())) {
-            ApiInterface apiService = ApiClient.getInstance().create(ApiInterface.class);
-            Call<Auth> call = apiService.authenticateUser(edittextUserEmail.getText().toString(),
-                    edittextUserPassword.getText().toString(),
-                    "password",
-                    "user");
-            call.enqueue(new Callback<Auth>() {
-                @Override
-                public void onResponse(Call<Auth> call, Response<Auth> response) {
-                    try {
-                        Log.i(TAG, "onResponse: " + response.body().getAccessToken());
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putInt(Constants.CREATED_AT, response.body().getCreatedAt());
-                        editor.putInt(Constants.EXPIRES_IN, response.body().getExpiresIn());
-                        editor.putString(Constants.ACCESS_TOKEN, response.body().getAccessToken());
-                        editor.putString(Constants.REFRESH_TOKEN, response.body().getRefreshToken());
-                        editor.putString(Constants.SCOPE, response.body().getScope());
-                        editor.putString(Constants.TOKEN_TYPE, response.body().getTokenType());
-                        editor.commit();
-                        getUserDetails();
-                        setupJob();
-                    } catch (NullPointerException e) {
-                        Log.e(TAG, "onResponse: ", e);
-                        Toast.makeText(AuthActivity.this, "Username or password is invalid",
-                                Toast.LENGTH_SHORT).show();
+        if (NetworkConnnection.isNetworkConnected(AuthActivity.this)) {
+            //TODO: check internet connectivity
+            if (!TextUtils.isEmpty(edittextUserEmail.getText().toString())
+                    && Patterns.EMAIL_ADDRESS.matcher(edittextUserEmail.getText().toString()).matches()
+                    && !TextUtils.isEmpty(edittextUserPassword.getText().toString())) {
+                progressDialog = new ProgressDialog(AuthActivity.this);
+                progressDialog.setMessage("Logging in");
+                progressDialog.show();
+                ApiInterface apiService = ApiClient.getInstance().create(ApiInterface.class);
+                Call<Auth> call = apiService.authenticateUser(edittextUserEmail.getText().toString(),
+                        edittextUserPassword.getText().toString(),
+                        "password",
+                        "user");
+                call.enqueue(new Callback<Auth>() {
+                    @Override
+                    public void onResponse(Call<Auth> call, Response<Auth> response) {
+                        try {
+                            Log.i(TAG, "onResponse: " + response.body().getAccessToken());
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putInt(Constants.CREATED_AT, response.body().getCreatedAt());
+                            editor.putInt(Constants.EXPIRES_IN, response.body().getExpiresIn());
+                            editor.putString(Constants.ACCESS_TOKEN, response.body().getAccessToken());
+                            editor.putString(Constants.REFRESH_TOKEN, response.body().getRefreshToken());
+                            editor.putString(Constants.SCOPE, response.body().getScope());
+                            editor.putString(Constants.TOKEN_TYPE, response.body().getTokenType());
+                            editor.putBoolean(Constants.IS_LOGGED_IN, true);
+                            editor.commit();
+                            getUserDetails();
+                            setupJob();
+                        } catch (NullPointerException e) {
+                            Log.e(TAG, "onResponse: ", e);
+                            Toast.makeText(AuthActivity.this, "Username or password is invalid",
+                                    Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+                        }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<Auth> call, Throwable t) {
-                    Log.e(TAG, "onFailure: " + t.toString());
-                    Toast.makeText(AuthActivity.this, "Failed to login", Toast.LENGTH_SHORT).show();
-                }
-            });
+                    @Override
+                    public void onFailure(Call<Auth> call, Throwable t) {
+                        Log.e(TAG, "onFailure: " + t.toString());
+                        progressDialog.dismiss();
+                        Toast.makeText(AuthActivity.this, "Failed to login", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Toast.makeText(this, "Please fill all information", Toast.LENGTH_SHORT).show();
+            }
         } else {
-            Toast.makeText(this, "Please fill all information", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Check internet Connection", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -156,6 +181,8 @@ public class AuthActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 Log.e(TAG, "onFailure: ", t);
+                if (progressDialog != null)
+                    progressDialog.dismiss();
                 Toast.makeText(AuthActivity.this, "Couldn't fetch User details", Toast.LENGTH_SHORT).show();
             }
         });
@@ -200,6 +227,8 @@ public class AuthActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<UserProfile> call, Throwable t) {
                 Log.e(TAG, "onFailure: ", t);
+                if (progressDialog != null)
+                    progressDialog.dismiss();
             }
         });
     }

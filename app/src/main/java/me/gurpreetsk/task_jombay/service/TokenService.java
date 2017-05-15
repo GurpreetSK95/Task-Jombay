@@ -29,37 +29,28 @@ public class TokenService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters job) {
-        ApiInterface service = ApiClient.getInstance().create(ApiInterface.class);
+//        ApiInterface service = ApiClient.getInstance().create(ApiInterface.class);
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        Call<Auth> call = service.getNewToken(preferences.getString(Constants.ACCESS_TOKEN, ""),
-                "refresh_token",
-                "user");
-        call.enqueue(new Callback<Auth>() {
-            @Override
-            public void onResponse(Call<Auth> call, Response<Auth> response) {
-                Log.i(TAG, "onResponse: " + response.code());
-                try {
-                    //todo test
-                    if (response.code() == 200) {
-                        Log.i(TAG, "onResponse: " + response.body().getAccessToken());
-                        Log.i(TAG, "onResponse: " + response.body().getExpiresIn());
-                        preferences.edit()
-                                .putString(Constants.ACCESS_TOKEN, response.body().getAccessToken())
-                                .putInt(Constants.EXPIRES_IN, response.body().getExpiresIn())
-                                .apply();
-                    }
-                } catch (Exception e) {
-                    Toast.makeText(TokenService.this, "The provided authorization grant is invalid",
-                            Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "onResponse: ", e);
-                }
-            }
+//        Call<Auth> call = service.getNewToken(preferences.getString(Constants.ACCESS_TOKEN, ""),
+//                "refresh_token",
+//                "user");
+//        call.enqueue(new Callback<Auth>() {
+//            @Override
+//            public void onResponse(Call<Auth> call, Response<Auth> response) {
+//                Log.i(TAG, "onResponse: " + response.code());
+        long nowTimestamp = System.currentTimeMillis() / 1000;
+        long originalTS = preferences.getInt(Constants.CREATED_AT, 0);
+        Log.i(TAG, "onResponse: " + (nowTimestamp - originalTS));
+        if (nowTimestamp - originalTS > 3600) {
+            preferences.edit().clear().apply();
+        }
+//            }
 
-            @Override
-            public void onFailure(Call<Auth> call, Throwable t) {
-                Log.i(TAG, "onFailure: " + t.toString());
-            }
-        });
+//            @Override
+//            public void onFailure(Call<Auth> call, Throwable t) {
+//                Log.i(TAG, "onFailure: " + t.toString());
+//            }
+//        });
 
         return false;
     }
