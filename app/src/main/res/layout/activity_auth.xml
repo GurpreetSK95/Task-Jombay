@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:layout_margin="@dimen/default_screen_margin"
     android:orientation="vertical"
-    tools:context="me.gurpreetsk.task_jombay.activity.AuthActivity">
+    tools:context=".ui.activity.AuthActivity">
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/edittext_user_email"

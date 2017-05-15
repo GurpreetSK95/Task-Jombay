@@ -40,12 +40,14 @@ public class TokenService extends JobService {
                 Log.i(TAG, "onResponse: " + response.code());
                 try {
                     //todo test
-                    Log.i(TAG, "onResponse: " + response.body().getAccessToken());
-                    Log.i(TAG, "onResponse: " + response.body().getExpiresIn());
-                    preferences.edit()
-                            .putString(Constants.ACCESS_TOKEN, response.body().getAccessToken())
-                            .putInt(Constants.EXPIRES_IN, response.body().getExpiresIn())
-                            .apply();
+                    if (response.code() == 200) {
+                        Log.i(TAG, "onResponse: " + response.body().getAccessToken());
+                        Log.i(TAG, "onResponse: " + response.body().getExpiresIn());
+                        preferences.edit()
+                                .putString(Constants.ACCESS_TOKEN, response.body().getAccessToken())
+                                .putInt(Constants.EXPIRES_IN, response.body().getExpiresIn())
+                                .apply();
+                    }
                 } catch (Exception e) {
                     Toast.makeText(TokenService.this, "The provided authorization grant is invalid",
                             Toast.LENGTH_SHORT).show();

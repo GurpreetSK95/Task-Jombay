@@ -33,6 +33,7 @@ dependencies {
     compile "com.android.support.constraint:constraint-layout:$coordinatorLayoutVer"
     compile "com.android.support:recyclerview-v7:$supportLibVer"
     compile "com.android.support:design:$supportLibVer"
+    compile "com.android.support:support-v4:$supportLibVer"
 
     //external dependencies
     //retrofit
@@ -48,5 +49,6 @@ dependencies {
     //misc
     compile "com.firebase:firebase-jobdispatcher:$jobSchedulerVer"
     compile "com.rengwuxian.materialedittext:library:$materialEditTextVer"
+    compile "io.realm:android-adapters:$realmAdapterVer"
 
 }

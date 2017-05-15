@@ -16,6 +16,7 @@ ext {
     materialEditTextVer = "2.1.4"
     stethoVer = "1.4.2"
     jobSchedulerVer = "0.6.0"
+    realmAdapterVer="2.0.0"
 
     //testing libraries
     espressoVer = "2.2.2"

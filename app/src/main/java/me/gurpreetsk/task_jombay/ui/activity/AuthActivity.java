@@ -1,4 +1,4 @@
-package me.gurpreetsk.task_jombay.activity;
+package me.gurpreetsk.task_jombay.ui.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,10 +23,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
+import io.realm.RealmQuery;
 import me.gurpreetsk.task_jombay.R;
 import me.gurpreetsk.task_jombay.model.Auth;
 import me.gurpreetsk.task_jombay.model.user.User;
 import me.gurpreetsk.task_jombay.model.user.UserDetails;
+import me.gurpreetsk.task_jombay.model.userProfile.UserProfile;
 import me.gurpreetsk.task_jombay.rest.ApiClient;
 import me.gurpreetsk.task_jombay.rest.ApiInterface;
 import me.gurpreetsk.task_jombay.service.TokenService;
@@ -140,13 +142,14 @@ public class AuthActivity extends AppCompatActivity {
                                     // entry already exists
                                     e.printStackTrace();
                                 }
+                                getUserLessons(details.getCompanyIds().get(0).getString(),
+                                        details.getId());
                             }
                         });
                     } finally {
                         if (realm != null)
                             realm.close();
                     }
-                    startActivity(new Intent(AuthActivity.this, MainActivity.class));
                 }
             }
 
@@ -154,6 +157,49 @@ public class AuthActivity extends AppCompatActivity {
             public void onFailure(Call<User> call, Throwable t) {
                 Log.e(TAG, "onFailure: ", t);
                 Toast.makeText(AuthActivity.this, "Couldn't fetch User details", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void getUserLessons(String companyId, String userId) {
+        ApiInterface service = ApiClient.getInstance().create(ApiInterface.class);
+        String auth = String.format("%s %s", preferences.getString(Constants.TOKEN_TYPE, ""),
+                preferences.getString(Constants.ACCESS_TOKEN, ""));
+        Log.i(TAG, "getUserDetails: " + auth);
+        Call<UserProfile> call = service.getUserProfile(auth, companyId, userId);
+        call.enqueue(new Callback<UserProfile>() {
+            @Override
+            public void onResponse(Call<UserProfile> call, Response<UserProfile> response) {
+                Log.i(TAG, "onResponse: " + response.code());
+                if (response.code() == 200) {
+                    final UserProfile profile = response.body().getUserProfile();
+                    Realm realm = null;
+                    try {
+                        realm = Realm.getDefaultInstance();
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                try {
+                                    realm.copyToRealm(profile);
+                                } catch (Exception e) {
+                                    // entry already exists
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    } finally {
+                        if (realm != null)
+                            realm.close();
+                    }
+                    Log.i(TAG, "onResponse: " +
+                            response.body().getUserProfile().getUserLessons());
+                    startActivity(new Intent(AuthActivity.this, MainActivity.class));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserProfile> call, Throwable t) {
+                Log.e(TAG, "onFailure: ", t);
             }
         });
     }
