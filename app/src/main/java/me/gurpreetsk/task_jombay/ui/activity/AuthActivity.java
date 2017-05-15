@@ -77,7 +77,6 @@ public class AuthActivity extends AppCompatActivity {
     @OnClick(R.id.button_login)
     public void loginUser() {
         if (NetworkConnnection.isNetworkConnected(AuthActivity.this)) {
-            //TODO: check internet connectivity
             if (!TextUtils.isEmpty(edittextUserEmail.getText().toString())
                     && Patterns.EMAIL_ADDRESS.matcher(edittextUserEmail.getText().toString()).matches()
                     && !TextUtils.isEmpty(edittextUserPassword.getText().toString())) {
@@ -135,7 +134,7 @@ public class AuthActivity extends AppCompatActivity {
                 .setService(TokenService.class)
                 .setTag("token-tag")
                 .setRecurring(true)
-                .setTrigger(Trigger.executionWindow(0, 6))  //todo set to 2700, 3300
+                .setTrigger(Trigger.executionWindow(600, 900))
                 .setLifetime(Lifetime.FOREVER)
                 .setReplaceCurrent(false)
                 .setRetryStrategy(RetryStrategy.DEFAULT_LINEAR)

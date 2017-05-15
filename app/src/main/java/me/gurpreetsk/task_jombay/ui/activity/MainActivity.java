@@ -1,5 +1,6 @@
 package me.gurpreetsk.task_jombay.ui.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -71,8 +72,14 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_logout:
+                preferences.edit().clear().apply();
+                startActivity(new Intent(MainActivity.this, AuthActivity.class));
+                MainActivity.this.finish();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
