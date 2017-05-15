@@ -38,6 +38,7 @@ public interface ApiInterface {
                                      @Path("user_id") String userId);
 
     @POST("/oauth/token.json")
+    @FormUrlEncoded
     Call<Auth> getNewToken(
             @Field("refresh_token") String token,
             @Field("grant_type") String grantType,

@@ -29,7 +29,6 @@ public class TokenService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters job) {
-        Toast.makeText(this, "JOB!", Toast.LENGTH_SHORT).show();
         ApiInterface service = ApiClient.getInstance().create(ApiInterface.class);
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         Call<Auth> call = service.getNewToken(preferences.getString(Constants.ACCESS_TOKEN, ""),
@@ -38,14 +37,19 @@ public class TokenService extends JobService {
         call.enqueue(new Callback<Auth>() {
             @Override
             public void onResponse(Call<Auth> call, Response<Auth> response) {
+                Log.i(TAG, "onResponse: " + response.code());
                 try {
                     //todo test
                     Log.i(TAG, "onResponse: " + response.body().getAccessToken());
                     Log.i(TAG, "onResponse: " + response.body().getExpiresIn());
-//                preferences.edit().putString(Constants.ACCESS_TOKEN, ).apply();
+                    preferences.edit()
+                            .putString(Constants.ACCESS_TOKEN, response.body().getAccessToken())
+                            .putInt(Constants.EXPIRES_IN, response.body().getExpiresIn())
+                            .apply();
                 } catch (Exception e) {
                     Toast.makeText(TokenService.this, "The provided authorization grant is invalid",
                             Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "onResponse: ", e);
                 }
             }
 

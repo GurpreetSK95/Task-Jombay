@@ -11,6 +11,12 @@ import android.util.Patterns;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.RetryStrategy;
+import com.firebase.jobdispatcher.Trigger;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import butterknife.BindView;
@@ -23,6 +29,7 @@ import me.gurpreetsk.task_jombay.model.user.User;
 import me.gurpreetsk.task_jombay.model.user.UserDetails;
 import me.gurpreetsk.task_jombay.rest.ApiClient;
 import me.gurpreetsk.task_jombay.rest.ApiInterface;
+import me.gurpreetsk.task_jombay.service.TokenService;
 import me.gurpreetsk.task_jombay.utils.Constants;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -75,6 +82,7 @@ public class AuthActivity extends AppCompatActivity {
                         editor.putString(Constants.TOKEN_TYPE, response.body().getTokenType());
                         editor.commit();
                         getUserDetails();
+                        setupJob();
                     } catch (NullPointerException e) {
                         Log.e(TAG, "onResponse: ", e);
                         Toast.makeText(AuthActivity.this, "Username or password is invalid",
@@ -91,6 +99,21 @@ public class AuthActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Please fill all information", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setupJob() {
+        FirebaseJobDispatcher dispatcher =
+                new FirebaseJobDispatcher(new GooglePlayDriver(AuthActivity.this));
+        Job myJob = dispatcher.newJobBuilder()
+                .setService(TokenService.class)
+                .setTag("token-tag")
+                .setRecurring(true)
+                .setTrigger(Trigger.executionWindow(0, 6))  //todo set to 2700, 3300
+                .setLifetime(Lifetime.FOREVER)
+                .setReplaceCurrent(false)
+                .setRetryStrategy(RetryStrategy.DEFAULT_LINEAR)
+                .build();
+        dispatcher.mustSchedule(myJob);
     }
 
     private void getUserDetails() {

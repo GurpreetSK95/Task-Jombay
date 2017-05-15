@@ -50,19 +50,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        FirebaseJobDispatcher dispatcher =
-                new FirebaseJobDispatcher(new GooglePlayDriver(MainActivity.this));
-        Job myJob = dispatcher.newJobBuilder()
-                .setService(TokenService.class) // the JobService that will be called
-                .setTag("token-tag")        // uniquely identifies the job
-                .setRecurring(true)
-                .setTrigger(Trigger.executionWindow(0, 6))//todo set
-                .setLifetime(Lifetime.FOREVER)
-                .setReplaceCurrent(false)
-                .setRetryStrategy(RetryStrategy.DEFAULT_LINEAR)
-                .build();
-        dispatcher.mustSchedule(myJob);
-
 
         Realm realm = null;
         try {
