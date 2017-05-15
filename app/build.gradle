@@ -2,6 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'key0'
+            keyPassword 'jombay'
+            storeFile file("$rootDir/app/keystore.jks")
+            storePassword 'jombay'
+        }
+    }
     compileSdkVersion compileSdkVer
     buildToolsVersion buildToolsVer
     defaultConfig {
@@ -16,6 +24,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     buildTypes.each {
@@ -23,19 +32,18 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile("com.android.support.test.espresso:espresso-core:$espressoVer", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testCompile "junit:junit:$junitVer"
-
     compile "com.android.support:appcompat-v7:$supportLibVer"
     compile "com.android.support.constraint:constraint-layout:$coordinatorLayoutVer"
     compile "com.android.support:recyclerview-v7:$supportLibVer"
     compile "com.android.support:design:$supportLibVer"
     compile "com.android.support:support-v4:$supportLibVer"
-
     //external dependencies
+
     //retrofit
     compile "com.google.code.gson:gson:$gsonVer"
     compile "com.squareup.retrofit2:retrofit:$retrofitVer"
@@ -49,6 +57,4 @@ dependencies {
     //misc
     compile "com.firebase:firebase-jobdispatcher:$jobSchedulerVer"
     compile "com.rengwuxian.materialedittext:library:$materialEditTextVer"
-    compile "io.realm:android-adapters:$realmAdapterVer"
-
-}
+    compile "io.realm:android-adapters:$realmAdapterVer"}
