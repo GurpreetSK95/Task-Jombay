@@ -20,6 +20,7 @@ import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import me.gurpreetsk.task_jombay.R;
+import me.gurpreetsk.task_jombay.model.userProfile.Lesson;
 import me.gurpreetsk.task_jombay.model.userProfile.UserProfile;
 import me.gurpreetsk.task_jombay.ui.adapter.CompletedAdapter;
 
@@ -52,12 +53,11 @@ public class CompletedLessonFragment extends Fragment {
         realm = Realm.getDefaultInstance();
 
         String text = "";
-        RealmResults<UserProfile> result = getLessons();
+        RealmResults<Lesson> result = getLessons();
         try {
             for (int i = 0; i < result.size(); i++)
-                for (int j = 0; j < result.get(i).getUserLessons().size(); j++)
-                    if (result.get(i).getUserLessons().get(j).getStatus().equals("completed"))
-                        text += result.get(i).getUserLessons().get(j).getLesson().getTitle() + "\n\n";
+//                if (result.get(i).getStatus().equals("completed"))
+                text += result.get(i).getLesson().getTitle() + "\n\n";
         } catch (Exception e) {
             text = "No Completed lessons found";
         }
@@ -65,13 +65,13 @@ public class CompletedLessonFragment extends Fragment {
         return view;
     }
 
-    private RealmResults<UserProfile> getLessons() {
-        final List<RealmResults<UserProfile>> results = new ArrayList<>();
+    private RealmResults<Lesson> getLessons() {
+        final List<RealmResults<Lesson>> results = new ArrayList<>();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmQuery<UserProfile> query = realm.where(UserProfile.class);
-                results.add(0, query.findAll());
+                RealmQuery<Lesson> query = realm.where(Lesson.class);
+                results.add(0, query.equalTo("status", "completed").findAll());
                 Log.i(TAG, "execute: " + query.findAll());
             }
         });

@@ -3,6 +3,8 @@ package me.gurpreetsk.task_jombay.model.userProfile;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.json.JSONObject;
+
 import io.realm.RealmObject;
 
 /**
@@ -19,7 +21,7 @@ public class Lesson extends RealmObject {
     private String status;
     @SerializedName("lesson")
     @Expose
-    private LessonTitle title;
+    private LessonTitle lessonTitle;
 
     public Lesson() {
     }
@@ -41,10 +43,10 @@ public class Lesson extends RealmObject {
     }
 
     public LessonTitle getLesson() {
-        return title;
+        return lessonTitle;
     }
 
-    public void setLesson(LessonTitle lesson) {
-        this.title = title;
+    public void setLesson(LessonTitle lessonTitle) {
+        this.lessonTitle = lessonTitle;
     }
 }

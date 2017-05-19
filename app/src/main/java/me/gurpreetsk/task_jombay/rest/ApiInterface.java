@@ -33,6 +33,7 @@ public interface ApiInterface {
             "include[user_lessons][only][]=status" +
             "&include[user_lessons][include][lesson][only]=title" +
             "&include[user_lessons][only][]=lesson_id&select=_id")
+//    @GET("https://api.es-q.co/companies/585772cfd3a07bffe3000077/sq/users/58577374d3a07bffe30000cc/user_profile?include[user_lessons][only][]=status&include[user_lessons][include][lesson][only]=title&include[user_lessons][only][]=lesson_id&select=_id")
     Call<UserProfile> getUserProfile(@Header("Authorization") String authorization,
                                      @Path("company_id") String companyId,
                                      @Path("user_id") String userId);

@@ -22,14 +22,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/user_password"
+        android:inputType="textPassword"
         app:met_floatingLabel="highlight"/>
 
     <Button
+        android:id="@+id/button_login"
         style="?buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:id="@+id/button_login"
         android:layout_margin="@dimen/default_screen_margin"
         android:padding="@dimen/default_screen_margin"
         android:text="@string/sign_in"/>
